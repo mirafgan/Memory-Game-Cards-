@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Memory Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        table {
+            border-collapse: collapse;
+            margin: auto;
+        }
+        
+        td {
+            text-align: center;
+            border: 1px solid rgb(195, 0, 255);
+            background-size: cover;
+            background-repeat: no-repeat;
+            width: 15vh;
+            height: 15vh;
+            color: yellow;
+            transition: all 1s;
+            transition-timing-function: ease-in-out;
+        }
+        
+        p {
+            text-align: center;
+            font-size: 2em;
+            color: red;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+    <p id="text"></p>
+    <table id="table">
+    </table>
+    <script>
+        const table = document.getElementById("table")
+        const text = document.getElementById("text")
+        let kod = ''
+        let arr = []
+        let tbl1 = []
+        let first = []
+        let gmv = ('GAMEOVER')
+        let wrong = 0
+        let win = 0
+        for (let i = 1; i <= 8; i++) {
+            arr.push(i)
+            arr.push(i)
+        }
+        for (let i = 0; i < 4; i++) {
+            tbl1[i] = []
+            for (let j = 0; j < 4; j++) {
+                let x = rand(0, arr.length - 1)
+                tbl1[i][j] = arr[x]
+                arr.splice(x, 1)
+            }
+        }
+        tableCreate()
+        setTimeout(close, 3000)
+
+        function turn(i, j) {
+            let td = document.getElementById(`td${i}${j}`)
+            td.style.backgroundImage = `url('img/${tbl1[i][j]}.png')`
+            if (first.length == 0) {
+                first = [i, j]
+            } else if (tbl1[i][j] != tbl1[first[0]][first[1]]) {
+                setTimeout(function() {
+                    let td = document.getElementById(`td${i}${j}`)
+                    td.style.backgroundImage = `url('img/0.png')`
+                    td.removeAttribute('onclick')
+                    td = document.getElementById(`td${first[0]}${first[1]}`)
+                    td.style.backgroundImage = `url('img/0.png')`
+                    first = []
+                    wrong++
+                }, 1000)
+            } else {
+                first = []
+                win++
+                if (win == 8) {
+                    gameover()
+                }
+            }
+        }
+
+        function close() {
+            let tds = document.getElementsByTagName('td')
+            for (let i = 0; i < tds.length; i++) {
+                tds[i].style.backgroundImage = `url('img/0.png')`
+            }
+        }
+
+        function tableCreate() {
+            for (let i = 0; i < 4; i++) {
+                kod += `<tr>`
+                for (let j = 0; j < 4; j++) {
+                    kod += `<td id= 'td${i}${j}' onclick='turn(${i},${j})' style=" background-image: url('img/${tbl1[i][j]}.png')"></td>`
+                }
+                kod += `</tr>`
+            }
+            table.innerHTML = kod
+        }
+
+        function gameover() {
+            let td1 = document.getElementsByTagName('td')
+            text.innerHTML = `${cehd} yanlış cəhd ilə Oyunu Qazandınız.`
+            for (let i = 0; i < td1.length; i++) {
+                if (i <= 3 || i >= 12) {
+                    td1[i].style.backgroundImage = `url('img/gameover.png')`
+                } else {
+                    td1[i].style.background = 'black'
+                    td1[i].innerHTML = gmv[i - 4]
+                }
+            }
+            first = []
+        }
+
+        function rand(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    </script>
+</body>
+
+</html>
